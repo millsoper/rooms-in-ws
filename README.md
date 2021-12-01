@@ -28,16 +28,16 @@ The frontend is a create-react-app. The backend is a basic node server, using th
 
 ### Existing functionality:
 
--[X] Users can choose a username
--[X] Duplicate usernames will be rejected
--[X] Users with usernames can create new "rooms"
--[X] Rooms are "open rooms" or "closed rooms" -- open rooms are shown on the landing page so people can join
--[X] Users with usernames can join existing "rooms"
--[X] Users in a room can leave the room
--[X] Rooms have a size limit. Above that, new entrants will be rejected
--[X] Open rooms which are full are removed from the visible list
--[X] When a user leaves an "open" room, it is re-added to the visible list
+- [X ]Users can choose a username
+- [X] Duplicate usernames will be rejected
+- [X] Users with usernames can create new "rooms"
+- [X] Rooms are "open rooms" or "closed rooms" -- open rooms are shown on the landing page so people can join
+- [X] Users with usernames can join existing "rooms"
+- [X] Users in a room can leave the room
+- [X] Rooms have a size limit. Above that, new entrants will be rejected
+- [X] Open rooms which are full are removed from the visible list
+- [X] When a user leaves an "open" room, it is re-added to the visible list
 
--[ ] If a user is disconnected, they leave the room
--[ ] Users can send messages to the room they are in
--[ ] Users can see messages sent to the room they are in
+- [ ] If a user is disconnected, they leave the room
+- [ ] Users can send messages to the room they are in
+- [ ] Users can see messages sent to the room they are in
