@@ -1,0 +1,30 @@
+{
+  "name": "rooms-in-ws",
+  "version": "1.0.0",
+  "description": "WebSocket backend for setting up rooms with ws",
+  "main": "server.js",
+  "dependencies": {
+    "ws": "^8.2.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/millsoper/rooms-in-ws.git"
+  },
+  "keywords": [
+    "websockets",
+    "ws",
+    "cribbage",
+    "multiplayer"
+  ],
+  "author": "Mill Soper",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/millsoper/rooms-in-ws/issues"
+  },
+  "homepage": "https://github.com/millsoper/rooms-in-ws#readme"
+}
