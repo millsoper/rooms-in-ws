@@ -2,7 +2,7 @@
 
 I've seen people looking for implementations of rooms with the ws library in a couple places and needed to build one for myself, so I'm putting it together separately from the project I needed it for.
 
-Based on the basic setup of a Create React App on a node backend from [bitlab studio] (https://blog.bitlabstudio.com/a-simple-chat-app-with-react-node-and-websocket-35d3c9835807).
+Based on the basic setup of a Create React App on a node backend from [bitlab studio](https://blog.bitlabstudio.com/a-simple-chat-app-with-react-node-and-websocket-35d3c9835807).
 
 ### Getting Started
 
