@@ -28,7 +28,7 @@ The frontend is a create-react-app. The backend is a basic node server, using th
 
 ### Existing functionality:
 
-- [X ]Users can choose a username
+- [X] Users can choose a username
 - [X] Duplicate usernames will be rejected
 - [X] Users with usernames can create new "rooms"
 - [X] Rooms are "open rooms" or "closed rooms" -- open rooms are shown on the landing page so people can join
