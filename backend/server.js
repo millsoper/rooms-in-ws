@@ -24,9 +24,10 @@ wss.on('connection', function connection(ws) {
 
   ws.on('message', function incoming(data) {
     const parsedData = JSON.parse(data);
-
+    console.log(parsedData.action);
     // ACTION: create a new connection.
     if (parsedData.action === ACTIONS.CREATE_USER) {
+      console.log("creating user.");
       // store the name to use when clearing out when they disconnect.
       const userName = parsedData.userName;
       storedUsername = userName;
@@ -35,8 +36,12 @@ wss.on('connection', function connection(ws) {
         const error = JSON.stringify({ type: MESSAGE_TYPES.ERROR, errorMessage: 'A user is already using that name right now. Please try another one.'});
         ws.send(error);
       } else {
+        console.log("we're sending the message back for success.");
+        const message = JSON.stringify({ type: MESSAGE_TYPES.USER_CREATED, userName });
+        console.log(message)
         // otherwise, store the socket.
         connections[userName] = { socket: ws, room: undefined};
+        ws.send(message);
       }
     }
     // ACTION: create a new room.
@@ -134,9 +139,11 @@ wss.on('connection', function connection(ws) {
   });
   ws.on('close', function close(){
     // here we actually do remove people from the rooms they were in.
+    if (connections[storedUsername] && connections[storedUsername].room){
     const roomToClear = connections[storedUsername].room;
     rooms[roomToClear].members = rooms[roomToClear].members.filter(member => member !== userName);
     connections[storedUsername] = undefined;
     console.log(`socket closed, ${savedPlayer} removed from room.`);
+    }
   });
 });

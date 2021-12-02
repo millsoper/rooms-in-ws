@@ -14,7 +14,8 @@ const MESSAGE_TYPES = {
   ERROR: 'error',
   OPEN_ROOMS: 'openRooms',
   ROOM_UPDATE: 'roomUpdate',
-  ROOM_JOINED: 'roomJoined'
+  ROOM_JOINED: 'roomJoined',
+  USER_CREATED: 'userCreated'
 }
 
 const ACTIONS = {

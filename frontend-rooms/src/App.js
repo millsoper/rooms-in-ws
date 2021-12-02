@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react'
+import { NamePicker } from './components/NamePicker';
+import { Vestibule } from './components/Vestibule';
+import './App.css';
 
 const URL = 'ws://localhost:3030'
 
-export const Rooms = () => {
+const App = () => {
 
+  const [ error, setError ] = useState('');
   const [ newRoomName, setNewRoomName ] = useState('');
   const [ currentRoom, setCurrentRoom ] = useState(undefined);
-  const [ userIsRegistered, setUserIsRegistered ] = useState(false);
   const [ joinRoomName, setJoinRoomName ] = useState('');
   const [ openRooms, setOpenRooms ] = useState([]);
   const [ ws, setWs ] = useState(new WebSocket(URL)); 
   const [ userName, setUserName]  = useState('');
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     ws.onopen = () => {
       // on connecting, log it to the console.
       console.log('connected');
+      setIsConnected(true);
       // ws.send(JSON.stringify({ action: 'getOpenRooms'}));
     }
 
@@ -25,12 +30,19 @@ export const Rooms = () => {
       console.log("message received on frontend: ", message);
       // check the message type so you know what to do.
       if (message.type === 'error'){
-        console.log("error: ", message.error);
-        // you have an error and need to display it for the user.
-        
-      } else if (message.type === 'openRooms'){
+        console.log("error: ", message.errorMessage);
+        setError(message.errorMessage);
+      } else {
+        setError('');
+      };
+      
+      if (message.type === 'openRooms'){
         console.log("new rooms!: ", message.openRooms);
         setOpenRooms(Object.keys(message.openRooms));
+
+      } else if (message.type === 'userCreated'){
+        console.log("success!: ", message.userName);
+        setUserName(message.userName);
 
       } else if (message.type === 'roomUpdate'){
         // do whatever you're going to do here.
@@ -59,11 +71,12 @@ export const Rooms = () => {
   }
 
     return (
-      <div>
-        <p>{`Your username: ${userName}`}</p> 
-
+      <div className="content">
         {
-          userIsRegistered ? 
+          error.length ? <p className="error">{error}</p> : null
+        }
+        {
+          userName ? 
             currentRoom ? 
               <div>
                 <h2>in-room interface</h2>
@@ -71,41 +84,11 @@ export const Rooms = () => {
                 <p>chat interface</p>
                 <p>list of members.</p>
               </div> :
-              <div> 
-                <h2>choose a room interface</h2>
-                <label htmlFor="joinRoomName">
-                  <input
-                    placeholder="room to join"
-                    id="joinRoomName"
-                    type="text"
-                    value={joinRoomName}
-                    onChange={(e) => {setJoinRoomName(e.target.value)}}
-                  />
-                </label>
-                <label htmlFor="newRoomName">
-                  <input
-                    placeholder="name for new room"
-                    id="newRoomName"
-                    type="text"
-                    value={newRoomName}
-                    onChange={(e) => {setNewRoomName(e.target.value)}}
-                  />
-                </label>
-              </div>
-          : <div>
-            <label htmlFor="username">
-            <input
-              placeholder="choose a username"
-              id="username"
-              type="text"
-              value={userName}
-              onChange={(e) => {setUserName(e.target.value)}}
-            />
-            </label>
-            <button className="button" onClick={() => { }}>get started</button>
-            Name interface. Set a username and wait for confirmation that it registered.
-            </div>
+              <Vestibule ws={ws} isConnected={isConnected} setError={setError}/>
+          : <NamePicker ws={ws} isConnected={isConnected} setError={setError} />
         }
       </div>
     )
   }
+
+  export default App;

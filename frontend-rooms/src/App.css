@@ -1,0 +1,53 @@
+* {
+  font-family: monospace, monospace;
+}
+
+.content {
+  text-align: center;
+  display: flex;
+  width: 80vw;
+  min-width: 320px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100vh;
+  margin: 0 auto;
+}
+
+.textInput {
+  margin-right: 18px;
+}
+
+.error {
+  padding: 20px;
+  border: 2px solid tomato;
+}
+
+.roomFormWrapper {
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  text-align: left;
+  justify-content: space-around;
+  padding: 20px;
+  width: 340px;
+}
+
+.radioSet {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.radioOption {
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 16px;
+}
+
+.roomForm input {
+  margin-left: 22px;
+}
