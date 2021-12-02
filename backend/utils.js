@@ -16,7 +16,8 @@ const MESSAGE_TYPES = {
   OPEN_ROOMS: 'openRooms',
   ROOM_UPDATE: 'roomUpdate',
   ROOM_JOINED: 'roomJoined',
-  USER_CREATED: 'userCreated'
+  USER_CREATED: 'userCreated',
+  NEW_MESSAGE: 'newMessage'
 }
 
 const ACTIONS = {

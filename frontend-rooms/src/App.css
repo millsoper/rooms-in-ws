@@ -24,7 +24,6 @@
 }
 
 .roomFormWrapper {
-  border: 1px solid black;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -32,6 +31,10 @@
   justify-content: space-around;
   padding: 20px;
   width: 340px;
+}
+
+.roomFormWrapper h2 {
+  margin-top: 0;
 }
 
 .radioSet {
@@ -50,4 +53,26 @@
 
 .roomForm input {
   margin-left: 22px;
+}
+
+.vestibule {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: start;
+}
+
+.vestibule .sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.openRooms {
+  padding: 16px;
+  border: 1px solid black;
+  margin: 16px;
+}
+
+.label {
+  font-weight: bold;
 }

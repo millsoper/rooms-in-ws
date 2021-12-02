@@ -48,10 +48,14 @@ const App = () => {
         setPage(PAGES.VESTIBULE);
       } else if (message.type === 'roomUpdate'){
         // do whatever you're going to do here.
+        // maybe this should be like, new users coming in?
 
       } else if (message.type === 'roomJoined'){
         setCurrentRoom(message.room);
         setPage(PAGES.ROOM);
+      } else if (message.type === 'newMessage'){
+        // if you've changed your room in the meantime, this will make a mess.
+        setUserMessages(message.messages);
       }
     }
 
@@ -77,6 +81,8 @@ const App = () => {
                 ws={ws}
                 isConnected={isConnected}
                 userMessages={userMessages}
+                setError={setError}
+                userName={userName}
               />
         } 
         { page === PAGES.VESTIBULE &&

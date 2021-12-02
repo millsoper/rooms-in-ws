@@ -28,7 +28,7 @@ export const Vestibule = ({ ws, isConnected, setError, openRooms, currentRoom, s
     console.log("open rooms: ", openRooms);
     
     return (
-    <>
+    <div className="vestibule">
         <div className="roomFormWrapper"> 
             <h2>join a room to play -- you can only join one at a time.</h2>
             <div className="radioSet">
@@ -40,6 +40,7 @@ export const Vestibule = ({ ws, isConnected, setError, openRooms, currentRoom, s
                         name="join_or_create"
                         value={INTERFACES.JOIN_ROOM}
                         onChange={(e) => setSelectedInterface(e.target.value)}
+                        checked={selectedInterface === INTERFACES.JOIN_ROOM}
                     />
                     Join a room
                 </label>
@@ -68,6 +69,7 @@ export const Vestibule = ({ ws, isConnected, setError, openRooms, currentRoom, s
                         name="join_or_create"
                         value={INTERFACES.CREATE_ROOM}
                         onChange={(e) => setSelectedInterface(e.target.value)}
+                        checked={selectedInterface === INTERFACES.CREATE_ROOM}
                     />
                     Create a new room
                     </label>
@@ -91,19 +93,23 @@ export const Vestibule = ({ ws, isConnected, setError, openRooms, currentRoom, s
             </div>
 
         </div>
-        <div>
+        <div className="sidebar">
+            { currentRoom && 
+                <button onClick={() => { setPage('room')}}>{`Go back to "${currentRoom.name}" >`}</button>
+            }
+            <div className="openRooms">
             <p className="label">Open Rooms: </p>
             {
                 openRooms.length ? 
                     openRooms.map((room, i) => {
-                        return <p key={i}>{ room }</p>
+                        return <li key={i}>
+                                { room }
+                                </li>
                     })
                 : <p>There are no rooms open right now.</p>
             }
+            </div>
         </div>
-        { currentRoom && 
-            <button onClick={() => { setPage('room')}}>{`Go back to ${currentRoom.name} >`}</button>
-        }
-    </>
+    </div>
     )
 };

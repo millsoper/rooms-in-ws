@@ -83,7 +83,7 @@ wss.on('connection', function connection(ws) {
         );
       }
 
-    // ACTION: join existing game.
+    // ACTION: join existing room.
     } else if (parsedData.action === ACTIONS.JOIN_ROOM) {
       console.log("joining room.");
       const roomName = parsedData.roomName;
@@ -134,8 +134,14 @@ wss.on('connection', function connection(ws) {
       // There's no security on this. People could send messages to rooms they aren't in.
       const roomName = parsedData.roomName;
       const userName = parsedData.userName;
-      const incomingMessage = parsedData.message;
-      const outgoingMessage = { type: MESSAGE_TYPES.NEW_MESSAGE, message: incomingMessage, sender: userName };
+      const incomingMessage = parsedData.text;
+      let outgoingMessage;
+      if (rooms[roomName]){
+        rooms[roomName].messages.push({ sender: userName, text: incomingMessage });
+        outgoingMessage = JSON.stringify({ type: MESSAGE_TYPES.NEW_MESSAGE, messages: rooms[roomName].messages });
+      } else {
+        outgoingMessage = JSON.stringify({ type: MESSAGE_TYPES.ERROR, errorMessage: 'Error sending message: that room no longer exists.'});
+      }
       utils.broadcastToRoomMembers({ connections, room: rooms[roomName], message: outgoingMessage });
 
     } else if (parsedData.action === ACTIONS.LEAVE_ROOM) {
