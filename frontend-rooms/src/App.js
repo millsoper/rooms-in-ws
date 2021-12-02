@@ -6,6 +6,7 @@ import './App.css';
 const URL = 'ws://localhost:3030'
 
 const App = () => {
+  const PAGES = { VESTIBULE: 'vestibule', NAME_PICKER: 'namePicker', INSIDE_ROOM: 'insideRoom'};
 
   const [ error, setError ] = useState('');
   const [ currentRoom, setCurrentRoom ] = useState(undefined);
@@ -13,6 +14,7 @@ const App = () => {
   const [ ws, setWs ] = useState(new WebSocket(URL)); 
   const [ userName, setUserName]  = useState('');
   const [isConnected, setIsConnected] = useState(false);
+  const [ page, setPage ] = useState(PAGES.NAME_PICKER);
 
   useEffect(() => {
     ws.onopen = () => {
@@ -36,18 +38,18 @@ const App = () => {
       
       if (message.type === 'openRooms'){
         console.log("new rooms!: ", message.openRooms);
-        setOpenRooms(Object.keys(message.openRooms));
+        setOpenRooms(message.openRooms);
 
       } else if (message.type === 'userCreated'){
         console.log("success!: ", message.userName);
         setUserName(message.userName);
-
+        setPage(PAGES.VESTIBULE);
       } else if (message.type === 'roomUpdate'){
         // do whatever you're going to do here.
 
-      } else if (message.type === 'joinedRoom'){
+      } else if (message.type === 'roomJoined'){
         setCurrentRoom(message.room);
-
+        setPage(PAGES.INSIDE_ROOM);
       }
     }
 
@@ -61,25 +63,34 @@ const App = () => {
     return (
       <div className="content">
         {
-          error.length ? <p className="error">{error}</p> : null
+          isConnected ? <p>connected</p> : <p>Not connected</p>
         }
         {
-          userName ? 
-            currentRoom ? 
+          error.length ? <p className="error">{error}</p> : null
+        }
+        { page === PAGES.INSIDE_ROOM &&
               <div>
+                <button className="button" onClick={() => { setPage(PAGES.VESTIBULE)}}>back</button>
                 <p>{currentRoom.name}</p>
-                <h2>in-room interface</h2>
-                <p>back button to exit</p>
-                <p>chat interface</p>
-                <p>list of members.</p>
-              </div> :
+                <p>Members in Room:</p>
+                <ul>
+                    {currentRoom && currentRoom.members &&
+                    currentRoom.members.map(( member, i) => {
+                      return <li>{member}</li>
+                    })}
+                </ul>
+              </div>
+        } 
+        { page === PAGES.VESTIBULE &&
               <Vestibule
                 ws={ws}
                 isConnected={isConnected}
                 setError={setError}
                 openRooms={openRooms}
               />
-          : <NamePicker ws={ws} isConnected={isConnected} setError={setError} />
+        }
+        { page === PAGES.NAME_PICKER &&
+          <NamePicker ws={ws} isConnected={isConnected} setError={setError} />
         }
       </div>
     )

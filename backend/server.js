@@ -46,6 +46,7 @@ wss.on('connection', function connection(ws) {
         console.log(message)
         // otherwise, store the socket.
         connections[userName] = { socket: ws, room: undefined};
+        console.log("connections: ", connections);
         ws.send(message);
       }
     }
@@ -67,10 +68,10 @@ wss.on('connection', function connection(ws) {
         // if it's an open room, add it to the list.
         // store the websocket for broadcasting later.
         if (isOpenRoom) {
-          openRooms[roomName];
+          openRooms[roomName] = true;
         }
 
-        ws.send(JSON.stringify({ type: 'joinedRoom', room: rooms[roomName] }));
+        ws.send(JSON.stringify({ type: MESSAGE_TYPES.ROOM_JOINED, room: rooms[roomName] }));
         utils.broadcastToAllUsers(
           { wss, 
             message: JSON.stringify(
@@ -104,7 +105,7 @@ wss.on('connection', function connection(ws) {
               && rooms[roomName].members.length === MAX_NUMBER_OF_ROOM_MEMBERS){
             openRooms[roomName] = undefined;
             //broadcast so that the lists are updated
-            const message = JSON.stringify({ type: MESSAGE_TYPES.OPEN_ROOMS, openRooms });
+            const message = JSON.stringify({ type: MESSAGE_TYPES.OPEN_ROOMS, openRooms: getOpenRooms() });
             utils.broadcastToAllUsers({ wss, message });
           }
 
@@ -161,9 +162,9 @@ wss.on('connection', function connection(ws) {
     // here we actually do remove people from the rooms they were in.
     if (connections[storedUsername] && connections[storedUsername].room){
     const roomToClear = connections[storedUsername].room;
-    rooms[roomToClear].members = rooms[roomToClear].members.filter(member => member !== userName);
+    rooms[roomToClear].members = rooms[roomToClear].members.filter(member => member !== storedUsername);
     connections[storedUsername] = undefined;
-    console.log(`socket closed, ${savedPlayer} removed from room.`);
+    console.log(`socket closed, ${storedUsername} removed from room.`);
     }
   });
 });

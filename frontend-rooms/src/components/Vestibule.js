@@ -24,6 +24,8 @@ export const Vestibule = ({ ws, isConnected, setError, openRooms }) => {
             setError('WebSocket is temporarily disconnected. Please try again.');
         }
     }
+
+    console.log("open rooms: ", openRooms);
     
     return (
     <>
@@ -94,7 +96,7 @@ export const Vestibule = ({ ws, isConnected, setError, openRooms }) => {
             {
                 openRooms.length ? 
                     openRooms.map((room, i) => {
-                        <p key={i}>room</p>
+                        return <p key={i}>{ room }</p>
                     })
                 : <p>There are no rooms open right now.</p>
             }

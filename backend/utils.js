@@ -1,8 +1,9 @@
 const broadcastToRoomMembers = ({ connections, room, message }) => {
   if (room){
-    for (let member in room.members){
-      connections[member].socket.send(message);
-    }
+    room.members.forEach(member => {
+      let socket = connections[member].socket;
+      socket && socket.send(message);
+    })
   }
 }
 
