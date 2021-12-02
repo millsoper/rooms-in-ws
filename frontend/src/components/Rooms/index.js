@@ -5,6 +5,8 @@ const URL = 'ws://localhost:3030'
 export const Rooms = () => {
 
   const [ newRoomName, setNewRoomName ] = useState('');
+  const [ currentRoom, setCurrentRoom ] = useState(undefined);
+  const [ userIsRegistered, setUserIsRegistered ] = useState(false);
   const [ joinRoomName, setJoinRoomName ] = useState('');
   const [ openRooms, setOpenRooms ] = useState([]);
   const [ ws, setWs ] = useState(new WebSocket(URL)); 
@@ -61,12 +63,48 @@ export const Rooms = () => {
         <p>{`Your username: ${userName}`}</p> 
 
         {
-          // select a username. you have to do this first. you have to register the name also. 
-
-          // now you should see an interface for joining a room, or creating a room.
-          // and also a list of open rooms.
-
-          // finally, when you successfully join, you should see the room, with a way to exit.
+          userIsRegistered ? 
+            currentRoom ? 
+              <div>
+                <h2>in-room interface</h2>
+                <p>back button to exit</p>
+                <p>chat interface</p>
+                <p>list of members.</p>
+              </div> :
+              <div> 
+                <h2>choose a room interface</h2>
+                <label htmlFor="joinRoomName">
+                  <input
+                    placeholder="room to join"
+                    id="joinRoomName"
+                    type="text"
+                    value={joinRoomName}
+                    onChange={(e) => {setJoinRoomName(e.target.value)}}
+                  />
+                </label>
+                <label htmlFor="newRoomName">
+                  <input
+                    placeholder="name for new room"
+                    id="newRoomName"
+                    type="text"
+                    value={newRoomName}
+                    onChange={(e) => {setNewRoomName(e.target.value)}}
+                  />
+                </label>
+              </div>
+          : <div>
+            <label htmlFor="username">
+            <input
+              placeholder="choose a username"
+              id="username"
+              type="text"
+              value={userName}
+              onChange={(e) => {setUserName(e.target.value)}}
+            />
+            </label>
+            <button className="button" onClick={() => { }}>get started</button>
+            Name interface. Set a username and wait for confirmation that it registered.
+            </div>
         }
       </div>
     )
