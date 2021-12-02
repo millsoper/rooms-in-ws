@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export const Vestibule = ({ ws, isConnected, setError, openRooms }) => {
+export const Vestibule = ({ ws, isConnected, setError, openRooms, currentRoom, setPage }) => {
     const INTERFACES = { JOIN_ROOM: 'joinRoom', CREATE_ROOM: 'createRoom' };
     const [ joinRoomName, setJoinRoomName ] = useState('');
     const [ newRoomName, setNewRoomName ] = useState('');
@@ -30,7 +30,7 @@ export const Vestibule = ({ ws, isConnected, setError, openRooms }) => {
     return (
     <>
         <div className="roomFormWrapper"> 
-            <h2>join a room to play!</h2>
+            <h2>join a room to play -- you can only join one at a time.</h2>
             <div className="radioSet">
                 <div className="radioOption">
                 <label htmlFor={INTERFACES.JOIN_ROOM}>
@@ -101,6 +101,9 @@ export const Vestibule = ({ ws, isConnected, setError, openRooms }) => {
                 : <p>There are no rooms open right now.</p>
             }
         </div>
+        { currentRoom && 
+            <button onClick={() => { setPage('room')}}>{`Go back to ${currentRoom.name} >`}</button>
+        }
     </>
     )
 };

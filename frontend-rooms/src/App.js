@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { NamePicker } from './components/NamePicker';
 import { Vestibule } from './components/Vestibule';
+import { Room } from './components/Room';
 import './App.css';
 
 const URL = 'ws://localhost:3030'
 
 const App = () => {
-  const PAGES = { VESTIBULE: 'vestibule', NAME_PICKER: 'namePicker', INSIDE_ROOM: 'insideRoom'};
+  const PAGES = { VESTIBULE: 'vestibule', NAME_PICKER: 'namePicker', ROOM: 'room'};
 
   const [ error, setError ] = useState('');
   const [ currentRoom, setCurrentRoom ] = useState(undefined);
   const [ openRooms, setOpenRooms ] = useState([]);
   const [ ws, setWs ] = useState(new WebSocket(URL)); 
   const [ userName, setUserName]  = useState('');
-  const [isConnected, setIsConnected] = useState(false);
+  const [ isConnected, setIsConnected] = useState(false);
   const [ page, setPage ] = useState(PAGES.NAME_PICKER);
+  const [ userMessages, setUserMessages ] = useState([]);
 
   useEffect(() => {
     ws.onopen = () => {
@@ -49,7 +51,7 @@ const App = () => {
 
       } else if (message.type === 'roomJoined'){
         setCurrentRoom(message.room);
-        setPage(PAGES.INSIDE_ROOM);
+        setPage(PAGES.ROOM);
       }
     }
 
@@ -68,18 +70,14 @@ const App = () => {
         {
           error.length ? <p className="error">{error}</p> : null
         }
-        { page === PAGES.INSIDE_ROOM &&
-              <div>
-                <button className="button" onClick={() => { setPage(PAGES.VESTIBULE)}}>back</button>
-                <p>{currentRoom.name}</p>
-                <p>Members in Room:</p>
-                <ul>
-                    {currentRoom && currentRoom.members &&
-                    currentRoom.members.map(( member, i) => {
-                      return <li>{member}</li>
-                    })}
-                </ul>
-              </div>
+        { page === PAGES.ROOM &&
+              <Room
+                setPage={setPage}
+                currentRoom={currentRoom}
+                ws={ws}
+                isConnected={isConnected}
+                userMessages={userMessages}
+              />
         } 
         { page === PAGES.VESTIBULE &&
               <Vestibule
@@ -87,6 +85,8 @@ const App = () => {
                 isConnected={isConnected}
                 setError={setError}
                 openRooms={openRooms}
+                currentRoom={currentRoom}
+                setPage={setPage}
               />
         }
         { page === PAGES.NAME_PICKER &&
