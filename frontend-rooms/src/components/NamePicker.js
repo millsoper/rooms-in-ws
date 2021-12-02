@@ -3,12 +3,16 @@ import React, { useCallback, useState } from 'react';
 export const NamePicker = ({ ws, isConnected, setError }) => {
     const [ name, setName ] = useState('');
     const clickHandler = useCallback(() => {
-        if (isConnected){
-            const message = { action: 'createUser', userName: name }
-            console.log("message: ", message);
-            ws.send(JSON.stringify(message));
+        if (name.length){
+            if (isConnected){
+                const message = { action: 'createUser', userName: name }
+                console.log("message: ", message);
+                ws.send(JSON.stringify(message));
+            } else {
+                setError('WebSocket has disconnected -- please try again.')
+            }
         } else {
-            setError('WebSocket has disconnected -- please try again.')
+            setError('Please enter a user name.');
         }
     }, [ws, name]);
     

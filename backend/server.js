@@ -15,16 +15,21 @@ const openRooms = {};
 
 const connections = {};
 
+const getOpenRooms = () => {
+  return Object.keys(openRooms);
+}
+
 wss.on('connection', function connection(ws) {
   console.log('received connection.');
   // we save this for later.
   let storedUsername = '';
   // immmediately send back the list of open rooms.
-  ws.send(JSON.stringify({ type: MESSAGE_TYPES.OPEN_ROOMS, openRooms }));
+  ws.send(JSON.stringify({ type: MESSAGE_TYPES.OPEN_ROOMS, openRooms: getOpenRooms() }));
 
   ws.on('message', function incoming(data) {
     const parsedData = JSON.parse(data);
     console.log(parsedData.action);
+
     // ACTION: create a new connection.
     if (parsedData.action === ACTIONS.CREATE_USER) {
       console.log("creating user.");
@@ -44,18 +49,20 @@ wss.on('connection', function connection(ws) {
         ws.send(message);
       }
     }
+
     // ACTION: create a new room.
     else if (parsedData.action === ACTIONS.CREATE_ROOM) {
       const roomName = parsedData.roomName;
-      const userName = parsedData.userName;
       const isOpenRoom = parsedData.isOpenRoom;
 
       // in theory, we're blocking the user from creating an existing room, but best to be safe on both ends.
       if (rooms[roomName]) {
+        console.log("You already have that room.");
         ws.send(JSON.stringify({ type: 'error', errorMessage: 'A room already exists with that name. Try creating a room with a different name.'}))
       } else {
-        rooms[roomName] = { messages: [], members: [ userName ], isOpenRoom };
-        connections[userName].room = roomName;
+        console.log("Creating the new room.")
+        rooms[roomName] = { messages: [], members: [ storedUsername ], isOpenRoom, name: roomName };
+        connections[storedUsername].room = roomName;
 
         // if it's an open room, add it to the list.
         // store the websocket for broadcasting later.
@@ -64,15 +71,23 @@ wss.on('connection', function connection(ws) {
         }
 
         ws.send(JSON.stringify({ type: 'joinedRoom', room: rooms[roomName] }));
-        utils.broadcastToAllUsers({ wss, message: { type: 'openRooms', openRooms }});
+        utils.broadcastToAllUsers(
+          { wss, 
+            message: JSON.stringify(
+              { type: 'openRooms',
+              openRooms: getOpenRooms()
+              }
+            )
+          }
+        );
       }
 
     // ACTION: join existing game.
     } else if (parsedData.action === ACTIONS.JOIN_ROOM) {
+      console.log("joining room.");
       const roomName = parsedData.roomName;
-      const userName = parsedData.userName;
       
-      console.log(`${userName} is joining the room ${roomName}!`);
+      console.log(`${storedUsername} is joining the room ${roomName}!`);
       // if the game exists, move forward.
       if (rooms[roomName]){
         // we've arbitrarily set the room size limit at 5.
@@ -80,8 +95,9 @@ wss.on('connection', function connection(ws) {
         let numberOfRoomMembers = rooms[roomName].members.length;
         // Make sure the room isn't full.
         if (numberOfRoomMembers < MAX_NUMBER_OF_ROOM_MEMBERS){
+          console.log("adding you to the room.");
           // add the new user to the existing room
-          rooms[roomName].members.push(userName);
+          rooms[roomName].members.push(storedUsername);
           // if the room is full, remove it from the available open games.
           // if people get accidentally disconnected, we don't move it back but that could get written in.
           if (rooms[roomName].isOpenRoom
@@ -98,13 +114,17 @@ wss.on('connection', function connection(ws) {
             }
           );
 
+          console.log("message prepared for join room action: ", roomJoinedMessage);
+
           // send the room data back to everyone in the room.
           utils.broadcastToRoomMembers({ connections, room: rooms[roomName], message: roomJoinedMessage });
         } else {
+          console.log("We've got an error -- room full.");
           const errorMessage = { type: MESSAGE_TYPES.ERROR, errorMessage: 'That game is already full. Try joining another game, or create your own.'};
           ws.send(JSON.stringify(errorMessage));
         }
       } else {
+        console.log("We've got an error -- room does not exist.");
         // if there is no game associated with the code, send an error.
         const errorMessage = { type: MESSAGE_TYPES.ERROR, errorMessage: 'There is no game associated with that code. Please enter a different code, or create a new game.'};
         ws.send(JSON.stringify(errorMessage));
@@ -129,7 +149,7 @@ wss.on('connection', function connection(ws) {
       // if it's an open room, put it back on the list!
       if (rooms[roomName].isOpenRoom){
         openRooms[roomName] = rooms[roomName];
-        const message = JSON.stringify({ type: MESSAGE_TYPES.OPEN_ROOMS, openRooms });
+        const message = JSON.stringify({ type: MESSAGE_TYPES.OPEN_ROOMS, openRooms: getOpenRooms() });
         utils.broadcastToAllUsers({ wss, message });
       }
       // now broadcast it back.

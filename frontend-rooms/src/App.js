@@ -8,9 +8,7 @@ const URL = 'ws://localhost:3030'
 const App = () => {
 
   const [ error, setError ] = useState('');
-  const [ newRoomName, setNewRoomName ] = useState('');
   const [ currentRoom, setCurrentRoom ] = useState(undefined);
-  const [ joinRoomName, setJoinRoomName ] = useState('');
   const [ openRooms, setOpenRooms ] = useState([]);
   const [ ws, setWs ] = useState(new WebSocket(URL)); 
   const [ userName, setUserName]  = useState('');
@@ -47,8 +45,8 @@ const App = () => {
       } else if (message.type === 'roomUpdate'){
         // do whatever you're going to do here.
 
-      } else if (message.type === 'roomJoined'){
-        // do whatever you're going to do here.
+      } else if (message.type === 'joinedRoom'){
+        setCurrentRoom(message.room);
 
       }
     }
@@ -60,16 +58,6 @@ const App = () => {
     }
   }, [ws, setWs, userName, openRooms, setOpenRooms]);
 
-  const joinRoom = (ws, userName, joinRoomName) => {
-    const message = JSON.stringify({ action: 'joinRoom', userName, roomName: joinRoomName});
-    ws.send(message);
-  }
-
-  const createRoom = (ws, userName, newRoomName) => {
-    const message = JSON.stringify({ action: 'createRoom', userName, roomName: newRoomName});
-    ws.send(message);
-  }
-
     return (
       <div className="content">
         {
@@ -79,12 +67,18 @@ const App = () => {
           userName ? 
             currentRoom ? 
               <div>
+                <p>{currentRoom.name}</p>
                 <h2>in-room interface</h2>
                 <p>back button to exit</p>
                 <p>chat interface</p>
                 <p>list of members.</p>
               </div> :
-              <Vestibule ws={ws} isConnected={isConnected} setError={setError}/>
+              <Vestibule
+                ws={ws}
+                isConnected={isConnected}
+                setError={setError}
+                openRooms={openRooms}
+              />
           : <NamePicker ws={ws} isConnected={isConnected} setError={setError} />
         }
       </div>
