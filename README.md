@@ -39,5 +39,5 @@ The frontend is a create-react-app. The backend is a basic node server, using th
 - [X] When a user leaves an "open" room, it is re-added to the visible list
 
 - [ ] If a user is disconnected, they leave the room
-- [ ] Users can send messages to the room they are in
-- [ ] Users can see messages sent to the room they are in
+- [X] Users can send messages to the room they are in
+- [X] Users can see messages sent to the room they are in
